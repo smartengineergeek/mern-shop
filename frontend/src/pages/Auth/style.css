@@ -1,0 +1,49 @@
+.signup-form{
+    padding-left: 30%;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+}
+.signup-form .btns{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    padding-top: 20px;
+}
+
+.signup-form .title{
+    height: 30px;
+}
+.signup-form input {
+    border-radius: 5px;
+    border: solid 1px #322f31;
+    padding: 10px;
+    margin-top: 20px;
+}
+/* main index file */
+.index{
+    padding: 40px;
+    left: 20%;
+    position: absolute;
+}
+.index .tab{
+    display: flex;
+    justify-content: space-evenly;
+    border: solid 1px #efefef;
+    width: 800px;
+    cursor: pointer;
+}
+.index .tab div{
+    width: 50%;
+    padding: 15px;
+    text-align: center;
+}
+.index .tab .active{
+    background-color: #322f31;
+    color: #fff;
+    padding: 15px;
+}
+.signup-form .error{
+    color: indianred;
+}

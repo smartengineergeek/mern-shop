@@ -1,0 +1,29 @@
+.product{
+    height: 500px;
+    width: 350px;
+    box-shadow: 0 1px 2px #322f31;
+    transition: box-shadow 0.3s ease-in-out;
+    padding: 10px;
+    margin: 10px;
+}
+.product .title{
+    text-align: center;
+    padding-bottom: 20px;
+}
+.product .imageUrl{
+    padding-top: 5px;
+    padding-left: 40px;
+}
+.product .imageUrl img{
+    width: 250px;
+    height: 300px;
+}
+.product .description{
+    text-align: center;
+    padding-top: 5px;
+}
+.product .btn{
+    display: flex;
+    justify-content: space-evenly;
+    padding-top: 20px;
+}

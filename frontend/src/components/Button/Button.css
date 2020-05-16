@@ -1,0 +1,19 @@
+.app-btn{
+    background-color: #322f31;
+    color: #fff;
+    padding: 16px;
+    cursor: pointer;
+    border: none;
+}
+.app-btn:hover, .app-btn:active,
+.app-btn.active{
+    border: solid 1px #322f31;
+    background-color: #fff;
+    color: #322f31;
+}
+/* for navigation links*/
+.nav .links ul li .app-btn:hover, .nav .links ul li .app-btn:active,
+.nav .links ul li .app-btn.active{
+    background-color: #fff;
+    color: #322f31;
+}
