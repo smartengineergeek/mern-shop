@@ -16,8 +16,9 @@ const productSchema = new Schema(
             required: true
         },
         creator: {
-            type: String,
-            default: 'avinash'
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
         }
     },
     { timestamps: true }

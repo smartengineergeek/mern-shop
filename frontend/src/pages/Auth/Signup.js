@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import queryString from 'query-string';
 
-import { required, length } from '../../util/validators';
+import { required, length } from '../../utils/validators';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Form/Input/Input';
 import './style.css';

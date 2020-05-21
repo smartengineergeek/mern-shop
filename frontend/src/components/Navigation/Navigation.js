@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 
 import './Navigation.css';
 import Button from '../Button/Button';
+import * as utils from '../../utils';
 
 const data = [
     { id: "navLinkShop", path: "/" },
@@ -24,10 +25,10 @@ function getIdByPath(path){
 }
 
 const select = id => {
-    data.forEach(datum => {
-        document.getElementById(datum.id).classList.remove('active');
-    })
-    document.getElementById(id).classList.add('active');      
+    // data.forEach(datum => {
+    //     document.getElementById(datum[id]).classList.remove('active');
+    // })
+    // document.getElementById(id).classList.add('active');      
 }
 
 class Navigation extends Component {
@@ -42,6 +43,8 @@ class Navigation extends Component {
     }    
 
     render(){
+        console.log("username", this.props.username);
+        console.log("val ", utils.validate(this.props.username))
         return(
             <div className="nav">
                 <div className="links">
@@ -50,13 +53,13 @@ class Navigation extends Component {
                         <li><Button title="Add Product" id="navLinkAddProduct" clickHandler={this.clickHandler} /></li>
                         <li><Button title="Admin" id="navLinkAdmin" clickHandler={this.clickHandler} /></li>
                     </ul>
-                    {this.props.username === "" ?
+                    {utils.validate(this.props.username) ?
+                    <ul className="ul-right">
+                        <li>Hi {this.props.username}!</li>
+                    </ul>:                
                     <ul className="ul-right">
                         <li><Button title="Login" id="navLinkLogin" clickHandler={this.clickHandler} /></li>
                         <li><Button title="Signup" id="navLinkSignup" clickHandler={this.clickHandler} /></li>
-                    </ul>:
-                    <ul className="ul-right">
-                        <li>Hi {this.props.username}!</li>
                     </ul>
                     }
                 </div>

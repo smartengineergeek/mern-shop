@@ -5,7 +5,7 @@ import Loader from 'react-loader-spinner';
 
 import './style.css';
 import Button from '../../components/Button/Button';
-import { required, length } from '../../util/validators';
+import { required, length } from '../../utils/validators';
 import Input from '../../components/Form/Input/Input';
 
 const initializeForm = {
@@ -83,6 +83,7 @@ class Login extends Component {
         this.setState({ form: { ...initializeForm } });
     }
 
+
     login = async(event) => {
         event.preventDefault();
         this.setState({isLoading: true});
@@ -108,13 +109,21 @@ class Login extends Component {
 
             if(response.status !== 200 && response.status !== 201){
                 this.setState({ isLoading: false });
-                console.log(response.data);
+                // console.log(response.data);
                 this.setState({ responseMessage: 'Login failed!'});
                 throw new Error('Login failed');
             }
-            console.log(response.data);
+            // console.log(response.data);
             this.setState({ responseMessage: 'Login Success!'});
-            
+            console.log(response.data)
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('username', response.data.username);
+            const remainingMilliseconds = 60 * 60 * 1000;
+            const expiryDate = new Date(
+                new Date().getTime() + remainingMilliseconds
+            );
+            localStorage.setItem('expiryDate', expiryDate);
+            this.props.setAutoLogout(remainingMilliseconds);    
             navTimeout = setTimeout(() => {
                 this.props.history.push("/");
             }, 3000);

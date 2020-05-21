@@ -4,7 +4,7 @@ import axios from 'axios';
 import Button from '../../components/Button/Button';
 import './AddProduct.css';
 import FilePicker from '../../components/Form/Input/FilePicker';
-import { generateBase64FromImage } from '../../util/image';
+import { generateBase64FromImage } from '../../utils/image';
 import Image from '../../components/Image/Image';
 
 var productInitial = {

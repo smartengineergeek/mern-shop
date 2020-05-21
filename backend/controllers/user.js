@@ -5,14 +5,13 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 exports.postSignup = (req, res, next) => {
-
     const username = req.body.username;
     const password = req.body.password;
 
     const errors = validationResult(req);
     // console.log('msg', errors.array());
     if(!errors.isEmpty()){
-        console.log(errors.array());
+        // console.log(errors.array());
         const error = new Error(' Validation failed ');
         error.statusCode = 422;
         error.data = errors.array();
@@ -44,11 +43,10 @@ exports.postSignup = (req, res, next) => {
 
 // for user login
 exports.postLogin = (req, res, next) => {
-    // console.log("postLogin");
-    // console.log(req.param);
-    // console.log(req.body);
     const username = req.body.username;
     const password = req.body.password;
+
+    console.log("username", username, "password", password);
     let loadedUser;
 
     User.findOne({ username: username })
@@ -75,7 +73,6 @@ exports.postLogin = (req, res, next) => {
             'somesupersecret',
             { expiresIn: '1h' }
         );
-        // console.log(token);
         res.status(200).json({ username: username, token: token, userId: loadedUser._id.toString() })
     })
     .catch(err => {
@@ -84,3 +81,4 @@ exports.postLogin = (req, res, next) => {
         next(err);
     })
 }
+
