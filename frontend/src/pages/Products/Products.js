@@ -20,12 +20,17 @@ class Products extends Component{
     }
 
     editProduct = async(productId) => {
+        console.log("productId ", productId);
         this.props.history.push(`/edit-product/${productId}`)
     }
 
     deleteProduct = async(productId) => {
         try{
-            let response = await axios.delete(`http://localhost:8081/product?id=${productId}`)
+            let response = await axios.delete(`http://localhost:8081/product?id=${productId}`, {
+                headers: {
+                    Authorization: 'Bearer ' + this.props.token
+                }
+            })
             if(response.status !== 200 && response.status !== 201){
                 throw new Error("Deleting a product failed!");
             }
@@ -41,7 +46,7 @@ class Products extends Component{
         return(
             <div className="products">
                 {this.state.products.length > 0 && this.state.products.map(product => (
-                    <Product key={product._id} product={product} 
+                    <Product key={product._id} product={product} isAdmin={this.props.isAdmin}
                         deleteProduct={this.deleteProduct} editProduct={this.editProduct}
                     />
                 ))}

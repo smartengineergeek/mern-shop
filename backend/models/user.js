@@ -11,7 +11,13 @@ const userSchema = new Schema(
         password: {
             type: 'String',
             required: true   
-        }
+        },
+        products: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Product'
+            }
+        ]
     },
     { timestamps: true }
 );

@@ -1,7 +1,7 @@
 // for validation of null & undefined
 export const validate = value => {
-    // console.log("value ", value)
-    if(value !== null && value !== undefined)
+//    value = value.trim();
+    if(value !== null && value !== undefined && value !== "")
         return true;
     return false;
     

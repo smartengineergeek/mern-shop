@@ -5,15 +5,19 @@
     cursor: pointer;
     border: none;
 }
-.app-btn:hover, .app-btn:active,
-.app-btn.active{
+.app-btn:active, .app-btn.active{
     border: solid 1px #322f31;
     background-color: #fff;
     color: #322f31;
 }
+.app-btn:hover{
+    border: solid 1px #fff;
+}
 /* for navigation links*/
-.nav .links ul li .app-btn:hover, .nav .links ul li .app-btn:active,
-.nav .links ul li .app-btn.active{
+.nav .links ul li .app-btn:active,  .nav .links ul li .app-btn.active{
     background-color: #fff;
     color: #322f31;
+}
+.nav .links ul li .app-btn:hover{
+    border: solid 1px #fff;
 }

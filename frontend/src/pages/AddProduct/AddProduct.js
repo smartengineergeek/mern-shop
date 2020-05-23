@@ -22,11 +22,16 @@ class AddProduct extends Component{
 
     async componentDidMount(){
         if(this.state.isEdit){
+            // console.log("token ", this.props.token);
             let pathname = window.location.pathname;
             let productId = pathname.replace("/edit-product/", "");        
             try{
                 // fetch single product data
-                let response = await axios.get(`http://localhost:8081/product/${productId}`);
+                let response = await axios.get(`http://localhost:8081/product/${productId}`, {
+                    headers: {
+                        Authorization: 'Bearer ' + this.props.token
+                    }
+                });
                 if(response.status !== 200 && response.status !== 201){
                     throw new Error('fetching single product failed');
                 }
@@ -57,7 +62,10 @@ class AddProduct extends Component{
                 method: 'post',
                 url: `http://localhost:8081/update-product/${productId}`, 
                 data: formData,                  
-                headers: {'Content-Type': 'multipart/form-data' }
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: 'Bearer ' + this.props.token 
+                }
             });
             if(response.status !== 200 && response.status !== 201){
                 throw new Error('updating product failed')
@@ -76,7 +84,10 @@ class AddProduct extends Component{
 
         fetch('http://localhost:8081/add-product', {
             method: 'POST',
-            body: formData
+            body: formData,
+            headers: {
+                Authorization: 'Bearer '+this.props.token
+            }
         })
         .then(res => {
             if(res.status !== 200 && res.status !== 201){
@@ -86,7 +97,7 @@ class AddProduct extends Component{
         }) 
         .then(resData => {
             this.clear();
-            console.log(resData);
+            // console.log(resData);
         })
         .catch(err => {
             console.log(err);
@@ -139,7 +150,7 @@ class AddProduct extends Component{
             description,
             imagePreview
         } = this.state.product;
-        console.log("imagePreview ", imagePreview);
+        // console.log("imagePreview ", imagePreview);
         return(
             <div className="add-product">
                 <input type="text" placeholder="enter title" name="title" className="title" value={title} onChange={event => this.changeHandler(event, "title")}/>

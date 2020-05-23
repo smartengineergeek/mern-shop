@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import './Navigation.css';
@@ -6,12 +6,12 @@ import Button from '../Button/Button';
 import * as utils from '../../utils';
 
 const data = [
-    { id: "navLinkShop", path: "/" },
     { id: "navLinkAddProduct", path: "/add-product" },
     { id: "navLinkAddProduct", path: "/edit-product" },
     { id: "navLinkAdmin", path: "/admin" },
     { id: "navLinkLogin", path: "/login" },
-    { id: "navLinkSignup", path: "/signup" }
+    { id: "navLinkSignup", path: "/signup" },
+    { id: "navLinkShop", path: "/" }
 ];
 
 function getPathById(id){
@@ -20,52 +20,59 @@ function getPathById(id){
 }
 
 function getIdByPath(path){
-    let datum = data.find(datum =>  path.includes(datum.path) );
+    let datum = data.find(datum =>  path.indexOf(datum.path) > -1);
+    // console.log("path ", path, "datum ", datum);
     return datum.id;
 }
 
-const select = id => {
-    // data.forEach(datum => {
-    //     document.getElementById(datum[id]).classList.remove('active');
-    // })
-    // document.getElementById(id).classList.add('active');      
-}
+function Navigation(props){
 
-class Navigation extends Component {
-    componentDidMount(){
-        let path = window.location.pathname;
-        select(getIdByPath(path));    
-    }
+    let id = getIdByPath(window.location.pathname);
+    let [activeId, setActiveId] = useState(id);
 
-    clickHandler = event => {    
-        select(event.target.id);
-        this.props.history.push(getPathById(event.target.id));  
+    const clickHandler = event => {
+        setActiveId(event.target.id);    
+        props.history.push(getPathById(event.target.id));  
     }    
 
-    render(){
-        console.log("username", this.props.username);
-        console.log("val ", utils.validate(this.props.username))
-        return(
-            <div className="nav">
-                <div className="links">
-                    <ul className="ul-left">
-                        <li><Button title="Shop" id="navLinkShop" clickHandler={this.clickHandler} /></li>
-                        <li><Button title="Add Product" id="navLinkAddProduct" clickHandler={this.clickHandler} /></li>
-                        <li><Button title="Admin" id="navLinkAdmin" clickHandler={this.clickHandler} /></li>
-                    </ul>
-                    {utils.validate(this.props.username) ?
-                    <ul className="ul-right">
-                        <li>Hi {this.props.username}!</li>
-                    </ul>:                
-                    <ul className="ul-right">
-                        <li><Button title="Login" id="navLinkLogin" clickHandler={this.clickHandler} /></li>
-                        <li><Button title="Signup" id="navLinkSignup" clickHandler={this.clickHandler} /></li>
-                    </ul>
-                    }
-                </div>
+    return(
+        <div className="nav">
+            <div className="links">
+                <ul className="ul-left">
+                    <li>
+                        <Button title="Shop" id="navLinkShop" isActive={activeId === "navLinkShop"? true: false} 
+                            clickHandler={clickHandler} />
+                    </li>
+                    <li>
+                        <Button title="Add Product" id="navLinkAddProduct" isActive={activeId === "navLinkAddProduct"? true: false}   
+                            clickHandler={clickHandler} />
+                    </li>
+                    <li>
+                        <Button title="Admin" id="navLinkAdmin" isActive={activeId === "navLinkAdmin"? true: false}    
+                            clickHandler={clickHandler} />
+                    </li>
+                </ul>
+                {utils.validate(props.username) ?
+                <ul className="ul-right">
+                    <li>Hi {props.username}!</li>
+                    <li>
+                        <Button title="Logout" clickHandler={props.logout} />
+                    </li>
+                </ul>:                
+                <ul className="ul-right">
+                    <li>
+                        <Button title="Login" id="navLinkLogin" isActive={activeId === "navLinkLogin"? true: false} 
+                            clickHandler={clickHandler} />
+                    </li>
+                    <li>
+                        <Button title="Signup" id="navLinkSignup" isActive={activeId === "navLinkSignup"? true: false}   
+                            clickHandler={clickHandler} />
+                    </li>
+                </ul>
+                }
             </div>
-        )
-    }
+        </div>
+    )
 }
 
 export default withRouter(Navigation);

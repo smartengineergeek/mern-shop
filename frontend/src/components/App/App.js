@@ -1,4 +1,4 @@
-import React, { useState, Component } from 'react';
+import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import Navigation from '../Navigation/Navigation';
@@ -19,10 +19,7 @@ class App extends Component {
     username: ''
   }
 
-  componentDidMount(){
-    if(utils.validate(document.getElementById("navLinkShop")))
-        document.getElementById("navLinkShop").classList.add('active');
-        
+  componentDidMount(){        
     const token = localStorage.getItem('token');
     const expiryDate = localStorage.getItem('expiryDate');
     if(!token || !expiryDate){
@@ -33,7 +30,7 @@ class App extends Component {
       return;
     }
     const username = localStorage.getItem('username');
-    console.log("username ", username, "token ", token, "expiryDate ", expiryDate)
+    // console.log("username ", username, "token ", token, "expiryDate ", expiryDate)
     const remainingMilliseconds = new Date(expiryDate).getTime() - new Date().getTime();
     this.setAutoLogout(remainingMilliseconds);
     this.setState({ isAuth: true, token: token, username: username });
@@ -50,26 +47,34 @@ class App extends Component {
   }
   
   logoutHandler = () => {
-    this.setState({ isAuth: false, token: null });
+    this.setState({ isAuth: false, token: null, username: "" });
     localStorage.removeItem('token');
     localStorage.removeItem('expiryDate');
-    localStorage.removeItem('userId');
+    localStorage.removeItem('username');
   }
 
- 
+  productsComp = props => ( 
+    <Products isAdmin="true" token={this.state.token} {...props} />
+  )
+
+  addProductComp = props => (
+    <AddProduct token={this.state.token} {...props} />
+  )
+
   render(){
     let { username } = this.state;
     return (
       <>
-        <Navigation username={username} />
+        <Navigation username={username} logout={this.logoutHandler} />
         <Switch>
-              <Route exact path="/" component={Products} />
-              <Route exact path="/add-product" component={AddProduct} />
-              <Route path="/edit-product/:productId" component={AddProduct} />
-              <Route exact path="/signup" component={Signup} />
+              <Route exact path="/" render={props => this.productsComp(props)} />
+              <Route exact path="/add-product" render={props => this.addProductComp(props)} />
+              <Route exact path="/admin" render={props => this.productsComp(props)} />
+              <Route path="/edit-product/:productId" render={props => this.addProductComp(props)} />
+              <Route exact path="/signup" render={props => <Signup {...props} />} />
               <Route exact path="/login" 
-                render={props => <Login {...props} setUser={this.setUser}  
-                logoutHandler={this.logoutHandler}   setAutoLogout={this.setAutoLogout} />} />
+                render={props => <Login {...props} setUser={this.setUser} logoutHandler={this.logoutHandler}   
+                setAutoLogout={this.setAutoLogout} />} />
               <Route component={NotFound} />
         </Switch>
       </>

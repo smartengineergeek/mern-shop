@@ -46,7 +46,7 @@ exports.postLogin = (req, res, next) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    console.log("username", username, "password", password);
+//    console.log("username", username, "password", password);
     let loadedUser;
 
     User.findOne({ username: username })

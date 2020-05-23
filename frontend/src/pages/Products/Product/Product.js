@@ -12,10 +12,11 @@ const Product = props => (
         <div className="description">
             {props.product.description}
         </div>
-        <div className="btn">
+        {props.isAdmin && <div className="btn">
             <Button title="Edit" id="productEdit"  clickHandler={() => props.editProduct(props.product._id)} />
             <Button title="Delete" id="productDelete" clickHandler={() => props.deleteProduct(props.product._id)} />
         </div>
+        }
     </div>
 );
 

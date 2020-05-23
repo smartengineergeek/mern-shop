@@ -115,7 +115,7 @@ class Login extends Component {
             }
             // console.log(response.data);
             this.setState({ responseMessage: 'Login Success!'});
-            console.log(response.data)
+            // console.log(response.data)
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('username', response.data.username);
             const remainingMilliseconds = 60 * 60 * 1000;

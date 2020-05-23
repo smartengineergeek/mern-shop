@@ -2,10 +2,10 @@ const fs = require('fs');
 const path = require('path');
 
 const Product = require('../models/product');
+const User = require('../models/user');
 
 // create
 exports.postAddProduct = (req, res, next) => {
-    // console.log(req.body);
     if(!req.file){
         const error = new Error('No image provided');
         error.statusCode = 422;
@@ -18,14 +18,25 @@ exports.postAddProduct = (req, res, next) => {
     const product = new Product({
         title: title,
         imageUrl: imageUrl,
-        description: description
+        description: description,
+        creator: req.userId
     });
-    product.save()
+    product
+        .save()
+        .then(result => {
+            return User.findById(req.userId);
+        })
+        .then(user => {
+            creator = user;
+            user.products.push(product)
+            return user.save();
+        })
         .then(result => {
             res.status(201).json({ 
                 success: "true", 
                 message: 'product created successfully!',
-                product: product
+                product: product,
+                creator: { _id: creator._id, name: creator.name }
             });
         })
         .catch(err => {
@@ -62,6 +73,7 @@ exports.getProducts = (req, res, next) => {
 // read a single product
 exports.getProduct = (req, res, next) => {
     const productId = req.params.productId;
+    // console.log("productId ", productId)
     Product.findById(productId)
     .then(product => {
         if(!product){
@@ -84,11 +96,17 @@ exports.getProduct = (req, res, next) => {
 
 // update
 exports.postUpdateProducts = (req, res, next) => {
-    // console.log(req.params.productId);
-    // res.status(200).json({ message: 'ok' });
+    // if(!req.file){
+    //     const error = new Error('No image provided');
+    //     error.statusCode = 422;
+    //     throw error;
+    // }
+    const imageUrl = req.file.path.replace("\\", "/");
+    console.log(imageUrl);
+
     const productId = req.params.productId;
     const formData = req.body;
-    console.log(formData);
+    console.log("formData ", formData);
     Product.findById(productId)
     .then(product => { 
         if(!product){
@@ -99,7 +117,7 @@ exports.postUpdateProducts = (req, res, next) => {
         return Product.findByIdAndUpdate({_id: productId }, formData)
     })
     .then(result => {
-        // console.log(result);
+        console.log(result);
     })
     .catch(err => {
         if(!err.statusCode)
