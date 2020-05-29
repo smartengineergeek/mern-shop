@@ -8,6 +8,7 @@ const { uuid } = require('uuidv4');
 
 const productRoutes = require("./routes/product");
 const userRoutes = require("./routes/user");
+const cartRoutes = require("./routes/cart");
 
 const fileStorage = multer.diskStorage({
     destination: function(req, file, cb){
@@ -28,6 +29,9 @@ const fileFilter = (req, file, cb) => {
 
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded());
+// app.use(express.multipart());
 app.use(
     multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
 );
@@ -44,6 +48,7 @@ app.use((req, res, next) => {
 
 app.use(productRoutes);
 app.use(userRoutes);
+app.use(cartRoutes);
 
 app.use((error, req, res, next) => {
     let status = error.statusCode || 500;

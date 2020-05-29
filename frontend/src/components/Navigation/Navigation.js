@@ -11,6 +11,7 @@ const data = [
     { id: "navLinkAdmin", path: "/admin" },
     { id: "navLinkLogin", path: "/login" },
     { id: "navLinkSignup", path: "/signup" },
+    { id: "navLinkCart", path: "/cart" },
     { id: "navLinkShop", path: "/" }
 ];
 
@@ -43,14 +44,22 @@ function Navigation(props){
                         <Button title="Shop" id="navLinkShop" isActive={activeId === "navLinkShop"? true: false} 
                             clickHandler={clickHandler} />
                     </li>
-                    <li>
-                        <Button title="Add Product" id="navLinkAddProduct" isActive={activeId === "navLinkAddProduct"? true: false}   
-                            clickHandler={clickHandler} />
-                    </li>
-                    <li>
-                        <Button title="Admin" id="navLinkAdmin" isActive={activeId === "navLinkAdmin"? true: false}    
-                            clickHandler={clickHandler} />
-                    </li>
+                    {props.userId &&
+                        <>
+                            <li>
+                                <Button title="Add Product" id="navLinkAddProduct" isActive={activeId === "navLinkAddProduct"? true: false}   
+                                    clickHandler={clickHandler} />
+                            </li>
+                            <li>
+                                <Button title="Admin" id="navLinkAdmin" isActive={activeId === "navLinkAdmin"? true: false}    
+                                    clickHandler={clickHandler} />
+                            </li>
+                            <li>
+                                <Button title="Cart" id="navLinkCart" isActive={activeId === "navLinkCart"? true: false}    
+                                    clickHandler={clickHandler} />
+                            </li>
+                        </>
+                    }
                 </ul>
                 {utils.validate(props.username) ?
                 <ul className="ul-right">

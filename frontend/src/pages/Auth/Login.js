@@ -25,7 +25,7 @@ const initializeForm = {
     },
     formIsValid: false
 };
-var navTimeout;
+// var navTimeout;
 
 class Login extends Component {
     state = {
@@ -34,8 +34,12 @@ class Login extends Component {
         isLoading: false
     }
 
+    componentDidMount(){
+        this.inputChangeHandler("username", "jack123");
+        this.inputChangeHandler("password", "jack123");
+    }
     componentWillUnmount(){
-        clearTimeout(navTimeout);
+        // clearTimeout(navTimeout);
     }
 
     inputChangeHandler = (input, value) => {
@@ -80,7 +84,10 @@ class Login extends Component {
     };
 
     clear = () => {
-        this.setState({ form: { ...initializeForm } });
+        this.setState({ 
+                form: { ...initializeForm }, 
+                isLoading: false
+        });
     }
 
 
@@ -118,20 +125,21 @@ class Login extends Component {
             // console.log(response.data)
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('username', response.data.username);
+            localStorage.setItem('userId', response.data.userId);
             const remainingMilliseconds = 60 * 60 * 1000;
             const expiryDate = new Date(
                 new Date().getTime() + remainingMilliseconds
             );
             localStorage.setItem('expiryDate', expiryDate);
             this.props.setAutoLogout(remainingMilliseconds);    
-            navTimeout = setTimeout(() => {
-                this.props.history.push("/");
-            }, 3000);
-
             if(response.data.username!== ""){
                 this.setState({ isLoading: false });
-                this.props.setUser(response.data.username);
+                this.props.setUser(response.data);
             }
+            // navTimeout = setTimeout(() => {
+                this.props.history.push("/");
+            // }, 1000);
+
         }catch(err){
             console.log(err);
         }
@@ -182,7 +190,7 @@ class Login extends Component {
                         height={30}
                         width={30}                        // timeout={3000} //3 secs
                     />:
-                    <Button title="Login" clickHandler={event => this.login(event)} />
+                    <Button title="Login" id="login-btn" clickHandler={event => this.login(event)} />
                     }
                 </div>
                 <div>

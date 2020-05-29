@@ -12,7 +12,7 @@ class Products extends Component{
     async componentDidMount(){
         try{
             let response = await axios('http://localhost:8081/products');
-            // console.log(response.data.products);
+            // console.log("products ", response.data.products);
             this.setState({ products: response.data.products });
         }catch(error){
             console.log(error);
@@ -20,7 +20,6 @@ class Products extends Component{
     }
 
     editProduct = async(productId) => {
-        console.log("productId ", productId);
         this.props.history.push(`/edit-product/${productId}`)
     }
 
@@ -29,7 +28,7 @@ class Products extends Component{
             let response = await axios.delete(`http://localhost:8081/product?id=${productId}`, {
                 headers: {
                     Authorization: 'Bearer ' + this.props.token
-                }
+                } 
             })
             if(response.status !== 200 && response.status !== 201){
                 throw new Error("Deleting a product failed!");
@@ -42,14 +41,49 @@ class Products extends Component{
             console.log(error);
         }
     }
+
+    addToCart = async(cart) => {
+//       console.log("cart ", cart);
+        try{
+            let response = await axios.post("http://localhost:8081/add-cart", 
+            cart,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + this.props.token
+                },
+            })
+            if(response.status !== 200 && response.status !== 201){
+                throw new Error('Adding product to cart failed!');
+            }
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     render(){
+        let displayProducts = [];
+        if(this.state.products.length > 0){
+            if(this.props.isAdmin){
+                displayProducts = this.state.products.filter(product => product.creator === this.props.userId)
+                console.log("displayProducts ", displayProducts)
+            }else{
+                displayProducts = [ ...this.state.products ];
+            }
+        }
+
         return(
             <div className="products">
-                {this.state.products.length > 0 && this.state.products.map(product => (
-                    <Product key={product._id} product={product} isAdmin={this.props.isAdmin}
+                {displayProducts.length > 0 && displayProducts.map(product => (
+                    <Product key={product._id} product={product} 
+                        isAuth={this.props.isAuth}
+                        isAdmin={this.props.isAdmin} 
                         deleteProduct={this.deleteProduct} editProduct={this.editProduct}
+                        addToCart={this.addToCart}
+                        userId={this.props.userId}
                     />
-                ))}
+                )
+                )}
             </div>           
         )
     }

@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     width: 400px;
+    padding-top: 100px;
 }
 .signup-form .btns{
     display: flex;

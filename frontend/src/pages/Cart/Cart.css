@@ -1,0 +1,30 @@
+.cart{
+    padding: 150px;
+}
+.cart-table {
+    border-collapse: collapse;
+}
+  
+.cart-table tbody td, .cart-table thead th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+  
+.cart-table tbody tr:nth-child(even){background-color: #f2f2f2;}
+  
+.cart-table tbody tr:hover {background-color: #ddd;}
+  
+.cart-table thead th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: darkred;
+    color: white;
+  }
+  
+.cart img{
+    width: 100px;
+}  
+.label-amount{
+    text-align: center;
+}

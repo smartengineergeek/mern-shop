@@ -3,6 +3,7 @@
     height: 70px;
     background: #322f31;
     color: #fff;
+    position: fixed;
 }
 .nav .links{
     display: flex;

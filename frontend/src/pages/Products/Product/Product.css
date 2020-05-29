@@ -1,26 +1,29 @@
 .product{
-    height: 500px;
-    width: 350px;
+    height: 380px;
+    width: 250px;
     box-shadow: 0 1px 2px #322f31;
     transition: box-shadow 0.3s ease-in-out;
-    padding: 10px;
     margin: 10px;
 }
 .product .title{
     text-align: center;
     padding-bottom: 20px;
+    display: flex;
+    justify-content: space-around;
 }
 .product .imageUrl{
     padding-top: 5px;
-    padding-left: 40px;
 }
 .product .imageUrl img{
     width: 250px;
-    height: 300px;
+    height: 150px;
 }
 .product .description{
     text-align: center;
     padding-top: 5px;
+    height: 60px;
+    max-height: 60px;
+    overflow-y: scroll;
 }
 .product .btn{
     display: flex;

@@ -10,6 +10,7 @@ import Image from '../../components/Image/Image';
 var productInitial = {
         title: '',
         description: '',
+        price: 0,
         imageUrl: '',
         imagePreview: null    
 };
@@ -38,6 +39,7 @@ class AddProduct extends Component{
                 let product = { ...this.state.product };
                 product.title = response.data.product.title;
                 product.description = response.data.product.description;
+                product.price = response.data.product.price;
                 product.imagePreview = `http://localhost:8081/${response.data.product.imageUrl}`;
                 this.setState({ product });
             }catch(error){
@@ -50,6 +52,7 @@ class AddProduct extends Component{
         const formData = new FormData();
         formData.append("title", this.state.product.title);
         formData.append("description", this.state.product.description);
+        formData.append("price", this.state.product.price);
         formData.append("image", this.state.product.imageUrl);
         let pathname = window.location.pathname;
         let productId = pathname.replace("/edit-product/", "");
@@ -57,22 +60,26 @@ class AddProduct extends Component{
         //     console.log(keyValuePair); 
         // }
 
-        try{
-            let response = await axios({
-                method: 'post',
-                url: `http://localhost:8081/update-product/${productId}`, 
-                data: formData,                  
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: 'Bearer ' + this.props.token 
-                }
-            });
-            if(response.status !== 200 && response.status !== 201){
-                throw new Error('updating product failed')
+        fetch(`http://localhost:8081/update-product/${productId}`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                Authorization: 'Bearer '+this.props.token
             }
-        }catch(err){
+        })
+        .then(res => {
+            if(res.status !== 200 && res.status !== 201){
+                throw new Error('creating product failed')
+            }
+            return res.json();
+        }) 
+        .then(resData => {
+            this.clear();
+            // console.log(resData);
+        })
+        .catch(err => {
             console.log(err);
-        }
+        })
 
     }
 
@@ -80,6 +87,7 @@ class AddProduct extends Component{
         const formData = new FormData();
         formData.append("title", this.state.product.title);
         formData.append("description", this.state.product.description);
+        formData.append("price", this.state.product.price);
         formData.append("image", this.state.product.imageUrl);
 
         fetch('http://localhost:8081/add-product', {
@@ -102,15 +110,6 @@ class AddProduct extends Component{
         .catch(err => {
             console.log(err);
         })
-        // try{
-        //     let response = await axios.post('http://localhost:8081/add-product', 
-        //     {
-        //         formData 
-        //     })
-        //     console.log(response);
-        // }catch(err){
-        //     console.log(err);
-        // }
     }
     
     clear = () => {
@@ -148,12 +147,16 @@ class AddProduct extends Component{
         let {
             title,
             description,
+            price,
             imagePreview
         } = this.state.product;
         // console.log("imagePreview ", imagePreview);
         return(
             <div className="add-product">
-                <input type="text" placeholder="enter title" name="title" className="title" value={title} onChange={event => this.changeHandler(event, "title")}/>
+                <input type="text" placeholder="enter title" name="title" className="title" 
+                    value={title} onChange={event => this.changeHandler(event, "title")} />
+                <input type="number" placeholder="enter price" name="price" className="price" 
+                    value={price} onChange={event => this.changeHandler(event, "price")} />
                 <FilePicker 
                     id="image"
                     label="image"

@@ -12,13 +12,16 @@ exports.postAddProduct = (req, res, next) => {
         throw error;
     }
     const imageUrl = req.file.path.replace("\\", "/");
+    // console.log(imageUrl);
     const title = req.body.title;
     const description = req.body.description;
+    const price = req.body.price;
     let creator;
     const product = new Product({
         title: title,
         imageUrl: imageUrl,
         description: description,
+        price: price,
         creator: req.userId
     });
     product
@@ -28,12 +31,12 @@ exports.postAddProduct = (req, res, next) => {
         })
         .then(user => {
             creator = user;
-            user.products.push(product)
+            user.products.push(product);
             return user.save();
         })
         .then(result => {
             res.status(201).json({ 
-                success: "true", 
+                success: 'true', 
                 message: 'product created successfully!',
                 product: product,
                 creator: { _id: creator._id, name: creator.name }
@@ -73,7 +76,6 @@ exports.getProducts = (req, res, next) => {
 // read a single product
 exports.getProduct = (req, res, next) => {
     const productId = req.params.productId;
-    // console.log("productId ", productId)
     Product.findById(productId)
     .then(product => {
         if(!product){
@@ -96,17 +98,11 @@ exports.getProduct = (req, res, next) => {
 
 // update
 exports.postUpdateProducts = (req, res, next) => {
-    // if(!req.file){
-    //     const error = new Error('No image provided');
-    //     error.statusCode = 422;
-    //     throw error;
-    // }
-    const imageUrl = req.file.path.replace("\\", "/");
-    console.log(imageUrl);
-
     const productId = req.params.productId;
     const formData = req.body;
-    console.log("formData ", formData);
+    if(req.file){
+        formData.imageUrl = req.file.path.replace("\\", "/");
+    }
     Product.findById(productId)
     .then(product => { 
         if(!product){
@@ -117,7 +113,7 @@ exports.postUpdateProducts = (req, res, next) => {
         return Product.findByIdAndUpdate({_id: productId }, formData)
     })
     .then(result => {
-        console.log(result);
+        // console.log(result);
     })
     .catch(err => {
         if(!err.statusCode)
