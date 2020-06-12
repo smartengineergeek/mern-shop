@@ -43,23 +43,26 @@ exports.postSignup = (req, res, next) => {
 
 // for user login
 exports.postLogin = (req, res, next) => {
+    console.log("postLogin")
     const username = req.body.username;
     const password = req.body.password;
 
-//    console.log("username", username, "password", password);
+    console.log("username", username, "password", password);
     let loadedUser;
 
     User.findOne({ username: username })
     .then(user => {
+        // console.log("user.js user ", user);
         if(!user){
             let error = new Error('a user with this username already exists!');
             error.statusCode = 401;
             throw error;
         }
         loadedUser = user;
-        return bcrypt.compare(password, user.password);
+        return bcrypt.compare(password, user.password)
     })
     .then(isEqual => {
+        // console.log("user.js 65");
         if(!isEqual){
             const error = new Error('Wrong password');
             error.statusCode = 401;
@@ -73,6 +76,14 @@ exports.postLogin = (req, res, next) => {
             'somesupersecret',
             { expiresIn: '4h' }
         );
+        req.session.isLoggedIn = true;
+        req.session.user = loadedUser;
+        console.log("user.js session", req.session);
+        req.session.save((function (err) {
+            if (err) 
+                console.log("session error ", err);
+        }));
+        
         res.status(200).json({ username: username, token: token, userId: loadedUser._id.toString() })
     })
     .catch(err => {
@@ -82,3 +93,9 @@ exports.postLogin = (req, res, next) => {
     })
 }
 
+exports.getLogout = (req, res, next) => {
+    req.session.destroy(err => {
+      console.log(err);
+      res.redirect('/');
+    });
+};

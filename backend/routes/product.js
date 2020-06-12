@@ -18,4 +18,15 @@ router.post('/update-product/:productId', isAuth, productController.postUpdatePr
 //delete
 router.delete("/product", isAuth, productController.deleteProduct);
 
+//cart
+router.post('/add-cart', isAuth, productController.postAddCart);
+
+router.get('/cart', isAuth, productController.getCart);
+
+router.delete('/cart', isAuth, productController.deleteCart);
+
+router.get("/checkout", isAuth, productController.getCheckout);
+
+router.get("/checkout/success", isAuth, productController.getCheckoutSuccess);
+
 module.exports = router;

@@ -65,7 +65,7 @@ class Products extends Component{
         let displayProducts = [];
         if(this.state.products.length > 0){
             if(this.props.isAdmin){
-                displayProducts = this.state.products.filter(product => product.creator === this.props.userId)
+                displayProducts = this.state.products.filter(product => product.userId === this.props.userId)
                 console.log("displayProducts ", displayProducts)
             }else{
                 displayProducts = [ ...this.state.products ];

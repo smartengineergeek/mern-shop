@@ -12,6 +12,7 @@ const data = [
     { id: "navLinkLogin", path: "/login" },
     { id: "navLinkSignup", path: "/signup" },
     { id: "navLinkCart", path: "/cart" },
+    { id: "navLinkOrders", path: "/orders" },
     { id: "navLinkShop", path: "/" }
 ];
 
@@ -56,6 +57,10 @@ function Navigation(props){
                             </li>
                             <li>
                                 <Button title="Cart" id="navLinkCart" isActive={activeId === "navLinkCart"? true: false}    
+                                    clickHandler={clickHandler} />
+                            </li>
+                            <li>
+                                <Button title="Orders" id="navLinkOrders" isActive={activeId === "navLinkOrders"? true: false}    
                                     clickHandler={clickHandler} />
                             </li>
                         </>

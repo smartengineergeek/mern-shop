@@ -105,7 +105,6 @@ class AddProduct extends Component{
         }) 
         .then(resData => {
             this.clear();
-            // console.log(resData);
         })
         .catch(err => {
             console.log(err);

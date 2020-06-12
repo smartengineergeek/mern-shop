@@ -35,8 +35,8 @@ class Login extends Component {
     }
 
     componentDidMount(){
-        this.inputChangeHandler("username", "jack123");
-        this.inputChangeHandler("password", "jack123");
+        this.inputChangeHandler("username", "robo1");
+        this.inputChangeHandler("password", "robo1");
     }
     componentWillUnmount(){
         // clearTimeout(navTimeout);

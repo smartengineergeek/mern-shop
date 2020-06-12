@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import * as Stripe from "@stripe/stripe-js";
 
 import './Cart.css';
 import {validate} from '../../utils';
 import Button from '../../components/Button/Button';
+// import { Link } from 'react-router-dom';
 
 export default function Cart(props){
     let [cartData, setCartData] = useState([]);
     let [message, setMessage] = useState('');
+    let [sessionId, setSessionId] = useState('');
     useEffect(() => {
         const fetchData = async() => {
             let response = await axios.get('http://localhost:8081/cart', {
@@ -15,9 +18,16 @@ export default function Cart(props){
                     'Authorization': 'Bearer '+ props.token
                 }
             });
-            console.log(response.data.cart);
+            // console.log(response.data.cart);
             if(validate(response) && response.status === 200)
                 setCartData(response.data);            
+
+            let response2 = await axios.get('http://localhost:8081/checkout', {
+                headers: {
+                    'Authorization': 'Bearer '+ props.token
+                }
+            });
+            console.log(response2.data);
         }
         fetchData();
     }, []);
@@ -32,8 +42,24 @@ export default function Cart(props){
             setMessage(response.data.message);
     }
 
+    const orderHandler = () => {
+        var stripe = Stripe("pk_test_05w1UMm37UTSKmtDTNZgzMTI00mSfQXY2V");
+        // var orderBtn = document.getElementById("order-btn");
+        // orderBtn.addEventListener("click", function() {
+            stripe.redirectToCheckout({
+                sessionId: sessionId
+            });
+        // })
+    }
+    let amountToPay = 0;
     return(
         <div className="cart">
+            <div className="centered">
+                <script src="https://js.stripe.com/v3/"></script>
+                <button id="order-btn" onClick={() => orderHandler()} className="btn">
+                    Order Now
+                </button>
+            </div> 
             <table className="cart-table">
                 <thead>
                     <tr>
@@ -41,7 +67,9 @@ export default function Cart(props){
                     </tr>
                 </thead>
                 <tbody>
-                    {validate(cartData.cart) ? cartData.cart.map(datum => (
+                    {validate(cartData.cart) ? cartData.cart.map(datum => {
+                        amountToPay += +(datum.quantity * datum.price);
+                        return(
                         <>
                         <tr key={datum._id}>
                             <td>
@@ -61,15 +89,19 @@ export default function Cart(props){
                             </td>
                         </tr>
                         </>
-                    )): <p>Please add item in cart</p>
+                    )}): <p>Please add item in cart</p>
                     }
                         <tr>
                             <td colSpan="5" className="label-amount">Amount to pay</td>
-                            <td>$100</td>
+                            <td>${amountToPay}</td>
                         </tr>
                 </tbody>
             </table>
             {message && <div>{message}</div>}
+            {/* <div className="centered">
+                <button id="order-btn" className="btn">Order Now</button>
+                <script src="https://js.stripe.com/v3/"></script>
+            </div>  */}
         </div>
     )
 }

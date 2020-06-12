@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch, Link } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+import axios from 'axios';
 
 import Navigation from '../Navigation/Navigation';
 import Products from '../../pages/Products/Products';
@@ -9,7 +11,12 @@ import Login from '../../pages/Auth/Login';
 import './App.css';
 // import * as utils from '../../utils';
 import Cart from '../../pages/Cart/Cart';
+import Checkout from '../../pages/Checkout/Checkout';
+import Orders from '../../pages/Orders/Orders';
+
 const pageNotFoundImage = require('../../404.jpg');
+
+const history = createBrowserHistory();
 
 class App extends Component {
 
@@ -44,12 +51,18 @@ class App extends Component {
     }, milliseconds);
   }
 
-  logoutHandler = () => {
+  logoutHandler = async() => {
     this.setState({ isAuth: false, token: null, username: "", userId: "" });
     localStorage.removeItem('token');
     localStorage.removeItem('expiryDate');
     localStorage.removeItem('username');
     localStorage.removeItem('userId');
+    try{
+      let response = await axios.get("/logout");
+      console.log(response);
+    }catch(err){
+      console.log(err);
+    }
   }
 
   setUser = user => {
@@ -92,6 +105,20 @@ class App extends Component {
           <Route exact path="/add-product" render={props => this.addProductComp(props)} />
           <Route exact path="/admin" render={props => this.productsComp(props, true)} />
           <Route exact path="/cart" render={props => <Cart token={this.state.token} />} />
+          <Route
+              path="/checkout"
+              render={() => (
+                <Checkout
+                  selectedProduct={
+                    { selectedProduct: {
+                      price: 100
+                    }}
+                  }
+                  history={history}
+                />
+              )}
+          />
+          <Route exact path="/orders" render={props => <Orders token={this.state.token} />} />
           <Route path="/edit-product/:productId" render={props => this.addProductComp(props)} />
           <Route component={NotFound} />
         </Switch>

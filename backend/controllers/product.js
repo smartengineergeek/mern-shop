@@ -12,34 +12,26 @@ exports.postAddProduct = (req, res, next) => {
         throw error;
     }
     const imageUrl = req.file.path.replace("\\", "/");
-    // console.log(imageUrl);
     const title = req.body.title;
     const description = req.body.description;
     const price = req.body.price;
     let creator;
+    
     const product = new Product({
         title: title,
         imageUrl: imageUrl,
         description: description,
         price: price,
-        creator: req.userId
+        userId: req.user
     });
     product
         .save()
         .then(result => {
-            return User.findById(req.userId);
-        })
-        .then(user => {
-            creator = user;
-            user.products.push(product);
-            return user.save();
-        })
-        .then(result => {
             res.status(201).json({ 
-                success: 'true', 
+                success: true, 
                 message: 'product created successfully!',
                 product: product,
-                creator: { _id: creator._id, name: creator.name }
+                userId: { _id: creator._id, name: creator.name }
             });
         })
         .catch(err => {
@@ -152,4 +144,109 @@ exports.deleteProduct = (req, res, next) => {
 const clearImage = filePath => {
     filePath = path.join(__dirname, '..', filePath);
     fs.unlink(filePath, err => console.log(err));    
+}
+
+// cart 
+exports.postAddCart = (req, res, next) => {
+    console.log("req.user ", req.user);
+    // save the cart data   
+    if(req.session.user){
+        // console.log("product.js req.user ", req.user);
+        console.log("product.js req.session.user ", req.session.user);    
+    }
+
+    const productId = req.body.productId;
+    Product.findById(productId)
+    .then(product => {
+        return req.user.addToCart(product);
+    })
+    .then(result => {
+        // console.log("result ", result);
+        return res.status(201).json({ result: result });
+        // res.redirect("/cart");
+    })
+    .catch(err => {
+        if(!err.statusCode){
+            err.statusCode = 500;
+        }
+        next(err);
+    })
+}
+
+exports.getCart = (req, res, next) => {
+    req.user
+    .populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+        const products = user.cart.items;
+        res.status(200).json({
+            message: "fetched cart",
+            cart: products,
+            totalItems: products.length || 0
+        })
+    })
+    .catch(err => {
+        if(!err.statusCode)
+            err.statusCode = 500;
+        next(err);
+    })
+}
+
+exports.deleteCart = (req, res, next) => {
+    const productId = req.query.id;
+    req.user
+    .removeFromCart(productId)
+    .then(result => {
+        res.redirect('/cart');
+    })
+    .catch(err => {
+        if(!err.statusCode)
+            err.statusCode = 500;
+        next(err);
+    })
+}
+
+// checkout 
+exports.getCheckout = (req, res, next) => {
+    let products;
+    let total = 0;
+    req.user
+        .populate('cart.items.productId')
+        .execPopulate()
+        .then(user => {
+            products = user.products;
+            products.forEach(p => {
+                total += p.quantity * p.productId.price;
+            })
+            return stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: products.map(p => {
+                    return{
+                        name: p.title,
+                        description: p.description,
+                        amount: p.price,
+                        currency: 'usd',
+                        quantity: 10
+                    }
+                }),
+                success_url: req.protocol + "://" +req.get("host") + "/checkout/success",
+                cancel_url: req.protocol + "://" +req.get("host") + "/checkout/cancel"
+            })
+        })
+        .then(session => {
+            return res.status(200).json({ 
+                products: products, 
+                totalSum: total,
+                sessionId: session.id 
+            })
+        })
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
+        });
+}
+
+exports.getCheckoutSuccess = (req, res, next) => {
+    console.log("success");
 }
